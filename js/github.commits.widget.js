@@ -71,7 +71,7 @@ THE SOFTWARE.
                     //add avatar & github link if possible
                     if (cur.author !== null) {
                     	user.append(avatar(cur.author.gravatar_id, avatarSize));
-                     	user.append(author(cur.author.login));                        
+                     	user.append(author(cur.author.login));
                     }
                     else //otherwise just list the name
                     {
@@ -81,10 +81,10 @@ THE SOFTWARE.
                     li.append(user);
                     
                     //add commit message
-										li.append(message(cur.commit.message, cur.sha));
-										li.append(when(cur.commit.committer.date));
+                    li.append(message(cur.commit.message, cur.sha));
+                    li.append(when(cur.commit.committer.date));
 
-										list.append(li);										
+                    list.append(li);
                 }
 
 
@@ -96,8 +96,8 @@ THE SOFTWARE.
 
                 function author(login) {
                     return  $('<a>')
-                    					.attr("href", 'https://github.com/' + login)
-                    					.text(login);
+                            .attr("href", 'https://github.com/' + login)
+                            .text(login);
                 }
 
                 function message(commitMessage, sha) {
@@ -108,11 +108,11 @@ THE SOFTWARE.
                     }
                     
                     var link = $('<a class="github-commit"></a>')
-											.attr("title", originalCommitMessage)
-											.attr("href", 'https://github.com/' + user + '/' + repo + '/commit/' + sha)
-											.text(commitMessage);
+                      .attr("title", originalCommitMessage)
+                      .attr("href", 'https://github.com/' + user + '/' + repo + '/commit/' + sha)
+                      .text(commitMessage);
                     
-										return link;
+                    return link;
                 }
 
                 function when(commitDate) {
