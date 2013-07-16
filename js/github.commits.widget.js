@@ -75,7 +75,7 @@ THE SOFTWARE.
                         ' ' + when(commit.commit.committer.date) +
                         '</li>');
                 }
-                element.append('<p class="github-commits-widget-by">by <a href="https://github.com/alexanderbeletsky/github.commits.widget">github.commits.widget</a></p>');
+
                 callback(element);
 
                 function itemClass(current, totalCommits) {
