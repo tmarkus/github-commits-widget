@@ -25,7 +25,6 @@ THE SOFTWARE.
 
 */
 
-
 (function ($) {
     function widget(element, options, callback) {
         this.element = element;
@@ -57,7 +56,6 @@ THE SOFTWARE.
             var last = widget.options.last === undefined ? 0 : widget.options.last;
             var limitMessage = widget.options.limitMessageTo === undefined ? 0 : widget.options.limitMessageTo;
 
-            element.append('<p>Widget intitalization, please wait...</p>');
             getCommits(user, repo, branch, function (data) {
                 var commits = data.data;
                 var totalCommits = (last < commits.length ? last : commits.length);
@@ -66,33 +64,40 @@ THE SOFTWARE.
 
                 var list = $('<ul class="github-commits-list">').appendTo(element);
                 for (var c = 0; c < totalCommits; c++) {
-                    var commit = commits[c];
-                    list.append(
-                        '<li ' + itemClass(c, totalCommits) + ' >' +
-                        ' ' + ((commit.author !== null) ? avatar(commit.author.gravatar_id, avatarSize) : '') +
-                        ' ' + ((commit.author !== null) ? author(commit.author.login) : commit.commit.committer.name) +
-                        ' committed ' + message(replaceHtmlTags(commit.commit.message), commit.sha) +
-                        ' ' + when(commit.commit.committer.date) +
-                        '</li>');
+                    var cur = commits[c];
+                    var li = $("<li>");
+                    
+                    var user = $('<span class="github-user">');
+                    //add avatar & github link if possible
+                    if (cur.author !== null) {
+                    	user.append(avatar(cur.author.gravatar_id, avatarSize));
+                     	user.append(author(cur.author.login));                        
+                    }
+                    else //otherwise just list the name
+                    {
+                    	user.append(cur.commit.committer.name);
+                    }
+                    
+                    li.append(user);
+                    
+                    //add commit message
+										li.append(message(cur.commit.message, cur.sha));
+										li.append(when(cur.commit.committer.date));
+
+										list.append(li);										
                 }
+
 
                 callback(element);
 
-                function itemClass(current, totalCommits) {
-                    if (current === 0) {
-                        return 'class="first"';
-                    } else if (current === totalCommits - 1) {
-                        return 'class="last"';
-                    }
-                    return '';
-                }
-
                 function avatar(hash, size) {
-                    return '<img class="github-avatar" src="http://www.gravatar.com/avatar/' + hash + '?s=' + size + '"/>';
+                    return $('<img class="github-avatar" src="http://www.gravatar.com/avatar/' + hash + '?s=' + size + '"/>');
                 }
 
                 function author(login) {
-                    return '<a class="github-user" href="https://github.com/' + login + '">' + login + '</a>';
+                    return  $('<a>')
+                    					.attr("href", 'https://github.com/' + login)
+                    					.text(login);
                 }
 
                 function message(commitMessage, sha) {
@@ -101,14 +106,13 @@ THE SOFTWARE.
                     {
                         commitMessage = commitMessage.substr(0, limitMessage) + '...';
                     }
-                    return '"' + '<a class="github-commit" title="' + originalCommitMessage + '" href="https://github.com/' + user + '/' + repo + '/commit/' + sha + '">' + commitMessage + '</a>"';
-                }
-
-                function replaceHtmlTags(message) {
-                    return message.replace(/&/g, "&amp;")
-                                    .replace(/>/g, "&gt;")
-                                    .replace(/</g, "&lt;")
-                                    .replace(/"/g, "&quot;");
+                    
+                    var link = $('<a class="github-commit"></a>')
+											.attr("title", originalCommitMessage)
+											.attr("href", 'https://github.com/' + user + '/' + repo + '/commit/' + sha)
+											.text(commitMessage);
+                    
+										return link;
                 }
 
                 function when(commitDate) {
